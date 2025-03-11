@@ -19,24 +19,28 @@ pipeline {
             }
         }
 
-        stage('Docker Build and Run') {
+        stage('Docker Login') {
             steps {
                 script {
-                    // Build the Docker image
+                    withCredentials([usernamePassword(credentialsId: 'docker_cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh """
+                            echo '${DOCKER_PASSWORD}' | docker login -u '${DOCKER_USERNAME}' --password-stdin
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Docker Build and Push') {
+            steps {
+                script {
                     sh """
+                        set -ex
+                        if [ ! -d client ]; then echo "Error: client directory not found"; exit 1; fi
                         cd client
-                    """
-                    sh """
-                        docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
-                    """
-
-                    // Tag the Docker image
-                    sh """
+                        ls
+                        docker build --no-cache -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
                         docker tag ${DOCKER_IMAGE}:${IMAGE_TAG} ${DOCKER_REPO}/${DOCKER_IMAGE}:${IMAGE_TAG}
-                    """
-
-                    // Push the image to Docker Hub
-                    sh """
                         docker push ${DOCKER_REPO}/${DOCKER_IMAGE}:${IMAGE_TAG}
                     """
                 }
