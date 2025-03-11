@@ -29,7 +29,7 @@ const Home = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
             <Paper style={{ padding: '10px' }} elevation={6}  >
-              <h1><b> Special Focus </b></h1>
+            <h1 style="color: blue;"><b>Special Focus</b></h1>
 
             </Paper>
           </Grid>
