@@ -24,6 +24,9 @@ pipeline {
                 script {
                     // Build the Docker image
                     sh """
+                        cd client
+                    """
+                    sh """
                         docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
                     """
 
