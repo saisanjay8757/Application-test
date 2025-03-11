@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Enter the Docker image tag')
-    }
-
     environment {
         DOCKER_IMAGE = 'newsmern'
         DOCKER_REPO = 'saideep12345'
@@ -15,6 +11,16 @@ pipeline {
             steps {
                 script {
                     sh 'ls'
+                }
+            }
+        }
+
+        stage('Get Git Commit ID') {
+            steps {
+                script {
+                    // Fetch the short Git commit hash
+                    env.IMAGE_TAG = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                    echo "Using Git commit ID as tag: ${env.IMAGE_TAG}"
                 }
             }
         }
