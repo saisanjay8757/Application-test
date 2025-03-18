@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://13.232.91.144:8080/api/v1/' });
+const API = axios.create({ baseURL: 'http://a7637adcf211a4193a125fb13924f7f5-1954920476.ap-south-1.elb.amazonaws.com:8080/api/v1/' });
 
 
 export const fetchPosts = () => API.get(`/posts`);
