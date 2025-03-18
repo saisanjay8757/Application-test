@@ -30,12 +30,12 @@ app.listen(PORT,()=>{
     console.log("Running server");
 })
 
-mongoose.connect('mongodb+srv://saideepdata30:ULf1cqii6gdpfGvp@cluster0.xjabl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(console.log("db connected"))
     .catch((error)=>console.log(error))
 
 
-//mongodb+srv://saideepdata30:ULf1cqii6gdpfGvp@cluster0.xjabl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+//
 
-//process.env.CONNECTION_URL
+//
 
