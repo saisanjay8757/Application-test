@@ -2,11 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'newsmern'
-        DOCKER_REPO = 'saideep12345'
-        MANIFEST_REPO = 'https://github.com/Saideep278/newsmern_manifest.git' // Git repo for manifests
+        DOCKER_IMAGE = 'application-test'
+        DOCKER_REPO = 'saisanjay8757'
+        MANIFEST_REPO = 'https://github.com/saisanjay8757/Application-test.git' // Git repo for manifests
         MANIFEST_BRANCH = 'main' // Change if using a different branch
-        DEPLOY_FILE = 'manifests/deploy.yml' // Path to the manifest file
     }
 
     stages {
@@ -30,7 +29,7 @@ pipeline {
         stage('Docker Login') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker_cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-token', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh """
                             echo '${DOCKER_PASSWORD}' | docker login -u '${DOCKER_USERNAME}' --password-stdin
                         """
@@ -55,33 +54,5 @@ pipeline {
             }
         }
 
-        stage('Update Kubernetes Manifest') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'git_token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                        sh """
-                            set -ex
-                            
-                            # Remove existing repo if exists
-                            rm -rf manifests_repo
-
-                            # Clone the Git repo containing Kubernetes manifests using credentials
-                            git clone -b ${MANIFEST_BRANCH} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Saideep278/newsmern_manifest.git manifests_repo
-                            cd manifests_repo
-
-                            # Update image tag in deploy.yml
-                            sed -i 's|image: ${DOCKER_REPO}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REPO}/${DOCKER_IMAGE}:${IMAGE_TAG}|' ${DEPLOY_FILE}
-
-                            # Commit and push changes
-                            git config user.name "saideep278"
-                            git config user.email "saideepchakilam278@gmail.com"
-                            git add ${DEPLOY_FILE}
-                            git commit -m "Update image tag to ${IMAGE_TAG}"
-                            git push origin ${MANIFEST_BRANCH}
-                        """
-                    }
-                }
-            }
-        }
     }
 }
