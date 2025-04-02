@@ -66,7 +66,7 @@ pipeline {
                             rm -rf manifests_repo
                             
                             # Clone the Git repo
-                            git clone -b ${MANIFEST_BRANCH} https://github.com/saisanjay8757/application_manifest.git manifests_repo
+                            git clone -b ${MANIFEST_BRANCH} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git
                             cd manifests_repo
                             
                             # Update image tag in deploy.yml
@@ -77,7 +77,7 @@ pipeline {
                             git config user.email "saisanjaysudham@gmail.com"
                             git add ${DEPLOY_FILE}
                             git commit -m "Update image tag to ${IMAGE_TAG}"
-                            git push origin ${MANIFEST_BRANCH}
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git ${MANIFEST_BRANCH}
                         """
                     }
                 }
