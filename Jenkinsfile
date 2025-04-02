@@ -62,19 +62,22 @@ pipeline {
                         sh """
                             set -ex
                             
-                            # Clone the Git repo (no credentials needed for public repo)
+                            # Remove existing repo if it exists
+                            rm -rf manifests_repo
+                            
+                            # Clone the Git repo
                             git clone -b ${MANIFEST_BRANCH} https://github.com/saisanjay8757/application_manifest.git manifests_repo
                             cd manifests_repo
                             
                             # Update image tag in deploy.yml
                             sed -i 's|image: ${DOCKER_REPO}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REPO}/${DOCKER_IMAGE}:${IMAGE_TAG}|' ${DEPLOY_FILE}
                             
-                            # Commit and push changes using GitHub credentials
+                            # Commit and push changes securely
                             git config user.name "saisanjay8757"
                             git config user.email "saisanjaysudham@gmail.com"
                             git add ${DEPLOY_FILE}
                             git commit -m "Update image tag to ${IMAGE_TAG}"
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git ${MANIFEST_BRANCH}
+                            git push origin ${MANIFEST_BRANCH}
                         """
                     }
                 }
