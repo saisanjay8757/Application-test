@@ -54,7 +54,16 @@ pipeline {
                 }
             }
         }
-
+		stage('Debug Credentials') {
+			steps {
+				script {
+					sh '''
+						echo "GIT_USERNAME=${GIT_USERNAME}"
+						echo "GIT_PASSWORD length: ${#GIT_PASSWORD}"  # Ensure password is not empty
+					'''
+				}
+			}
+		}
         stage('Update Kubernetes Manifest') {
             steps {
                 script {
