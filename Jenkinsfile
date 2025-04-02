@@ -66,7 +66,7 @@ pipeline {
                             rm -rf manifests_repo
                             
                             # Clone the Git repo
-                            git clone -b ${MANIFEST_BRANCH} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git
+                            git clone -b ${MANIFEST_BRANCH} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git manifests_repo
                             cd manifests_repo
                             
                             # Update image tag in deploy.yml
