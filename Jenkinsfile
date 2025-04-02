@@ -4,9 +4,9 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'application-test'
         DOCKER_REPO = 'saisanjay8757'
-        MANIFEST_REPO = 'https://github.com/saisanjay8757/Application-test.git' // Git repo for manifests
-        MANIFEST_BRANCH = 'main' // Change if using a different branch
-        DEPLOY_FILE = 'manifests/deploy.yml' // Path to the manifest file
+        MANIFEST_REPO = 'https://github.com/saisanjay8757/Application-test.git'
+        MANIFEST_BRANCH = 'main'
+        DEPLOY_FILE = 'manifests/deploy.yml'
     }
 
     stages {
@@ -54,41 +54,31 @@ pipeline {
                 }
             }
         }
-		stage('Debug Credentials') {
-			steps {
-				script {
-					sh '''
-						echo "GIT_USERNAME=${GIT_USERNAME}"
-						echo "GIT_PASSWORD length: ${#GIT_PASSWORD}"  # Ensure password is not empty
-					'''
-				}
-			}
-		}
+
         stage('Update Kubernetes Manifest') {
             steps {
                 script {
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                         sh """
                             set -ex
                             
-
-                            # Clone the Git repo containing Kubernetes manifests using credentials
-                            git clone -b ${MANIFEST_BRANCH} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git manifests_repo
+                            # Clone the Git repo (no credentials needed for public repo)
+                            git clone -b ${MANIFEST_BRANCH} https://github.com/saisanjay8757/application_manifest.git manifests_repo
                             cd manifests_repo
-
+                            
                             # Update image tag in deploy.yml
                             sed -i 's|image: ${DOCKER_REPO}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REPO}/${DOCKER_IMAGE}:${IMAGE_TAG}|' ${DEPLOY_FILE}
-
-                            # Commit and push changes
+                            
+                            # Commit and push changes using GitHub credentials
                             git config user.name "saisanjay8757"
                             git config user.email "saisanjaysudham@gmail.com"
                             git add ${DEPLOY_FILE}
                             git commit -m "Update image tag to ${IMAGE_TAG}"
-                            git push origin ${MANIFEST_BRANCH}
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git ${MANIFEST_BRANCH}
                         """
                     }
                 }
             }
-        
+        }
     }
 }
-
