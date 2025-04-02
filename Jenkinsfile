@@ -67,12 +67,9 @@ pipeline {
         stage('Update Kubernetes Manifest') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'git-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                         sh """
                             set -ex
                             
-                            # Remove existing repo if exists
-                            rm -rf manifests_repo
 
                             # Clone the Git repo containing Kubernetes manifests using credentials
                             git clone -b ${MANIFEST_BRANCH} https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/saisanjay8757/application_manifest.git manifests_repo
@@ -91,7 +88,7 @@ pipeline {
                     }
                 }
             }
-        }
+        
     }
 }
 
